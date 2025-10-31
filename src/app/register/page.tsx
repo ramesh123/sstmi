@@ -32,6 +32,62 @@ interface FormValues {
   confirmPassword: string;
 }
 
+const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+return (
+    <div
+      style={{
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '1rem 1.5rem',
+        borderRadius: '8px',
+        backgroundColor: type === 'success' ? '#10b981' : '#ef4444',
+        color: 'white',
+        fontWeight: '500',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        zIndex: 9999,
+        animation: 'slideIn 0.3s ease-out',
+        minWidth: '300px'
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>{message}</span>
+        <button
+          onClick={onClose}
+          style={{
+            marginLeft: '1rem',
+            background: 'none',
+            border: 'none',
+            color: 'white',
+            fontSize: '1.5rem',
+            cursor: 'pointer',
+            padding: '0',
+            lineHeight: '1'
+          }}
+        >
+          ×
+        </button>
+      </div>
+      <style>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
 const RegisterForm: React.FC = () => {
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [strengthLabel, setStrengthLabel] = useState('');
@@ -52,7 +108,7 @@ const RegisterForm: React.FC = () => {
         formik.setFieldError('password', 'Password is too weak. Use a stronger password.');
         return;
       } else {
-        handleRegister(values);
+        handleRegister(values);        
       }
       // console.log('Registration successful:', values);
       // alert('Registration successful!');
@@ -64,42 +120,51 @@ const RegisterForm: React.FC = () => {
   });
 
   const handleRegister = async (values: any) => {
-    try {
-      if (typeof window.grecaptcha === 'undefined') {
-        throw new Error('reCAPTCHA has not loaded');
-      }
-
-      const token = await new Promise<string>((resolve, reject) => {
-        window.grecaptcha.ready(() => {
-          window.grecaptcha.execute('6Lfgd58qAAAAAPV03W3LgVMhxu57mDL006Jr3Jhs', { action: 'submit' })
-            .then(resolve, reject);
-        });
+  try {
+    const token = await new Promise<string>((resolve, reject) => {
+      window.grecaptcha.ready(() => {
+        window.grecaptcha
+          .execute('6Lfgd58qAAAAAPV03W3LgVMhxu57mDL006Jr3Jhs', { action: 'submit' })
+          .then(resolve, reject);
       });
+    });
 
-      const apiEndpoint = "https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/user";
+    const apiEndpoint = "https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/user";
 
-      const body = {
-        action: "AddUser",
-        user: {
-          UserId: values.name,
-          Email: values.email,
-          Name: values.name,
-          Password: values.password,
-        },
-        token: token,
-      };
-      //log("Request body:", body);
-      const data = await makeSignedRequest(apiEndpoint, "POST", body);
-      let msg = JSON.parse(data?.body);
-      setToast({ message: msg?.message, type: 'success' });
-    } catch (error) {
-      console.error("Submission error:", error);
-      // log("Submission error:", error);
-      // setMessage("An error occurred. Please try again later.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const body = {
+      action: "AddUser",
+      user: {
+        UserId: values.email,
+        Email: values.email,
+        Name: values.name,
+        Password: values.password,
+      },
+      token,
+    };
+
+    const response = await fetch(apiEndpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    let msg = JSON.parse(data?.body);
+    setToast({ message: msg?.message, type: 'success' });
+    formik.resetForm();
+    setPasswordStrength(0);
+    setStrengthLabel('');
+    // if (!response.ok) throw new Error(data.message || "Registration failed");
+
+    // setToast({ message: data.message, type: "success" });
+  } catch (error) {
+    console.error("Error:", error);
+    setToast({ message: (error as Error).message, type: "error" });
+    formik.resetForm();
+    setPasswordStrength(0);
+    setStrengthLabel('');
+  }
+};
 
   // Calculate password strength in real-time
   useEffect(() => {
@@ -122,7 +187,7 @@ const RegisterForm: React.FC = () => {
     strength = checks.filter(Boolean).length;
     setPasswordStrength(strength);
 
-    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong', 'Strong'];
     setStrengthLabel(labels[strength]);
   }, [formik.values.password]);
 
@@ -135,10 +200,19 @@ const RegisterForm: React.FC = () => {
     return '#d9d9d9';
   };
 
+  
+
   return (
     <>
       <MainHeader />
       <Navbar />
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       <div className="gradient-background">
         <div className="bg-gradient-to-b from-golden-gradient-start via-golden-gradient-middle to-golden-gradient-end text-darkRed min-h-screen">
           <div className="container mx-auto max-w-2xl">

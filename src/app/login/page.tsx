@@ -4,6 +4,7 @@ import MainHeader from '@/components/TopInfo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { makeSignedRequest } from '../app/../layout-client';
+import { useRouter } from 'next/navigation';
 
 interface LoginForm {
   email: string;
@@ -84,6 +85,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -133,24 +135,26 @@ export default function LoginPage() {
       //log("Request body:", body);
       const data = await makeSignedRequest(apiEndpoint, "POST", body);
       let msg = JSON.parse(data?.body);
-      setToast({ message: msg?.message, type: 'success' });
+      if (data?.statusCode === 200) {
+        setToast({ message: msg?.message, type: 'success' });
+      } else {
+        setToast({ message: msg?.message, type: 'error' });
+      }
     } catch (error) {
-      console.error("Submission error:", error);
-     // log("Submission error:", error);
-     // setMessage("An error occurred. Please try again later.");
+      setToast({ message: "An error occurred. Please try again later.", type: 'error' });
     } finally {
       setIsLoading(false);
     }
   };
 
 
-  const handleSignUp = () => {
-    setToast({ message: 'Sign Up functionality coming soon!', type: 'error' });
+  const handleForgotPassword = () => {
+    router.push('/forgotpassword/');
   };
 
-  const handleForgotPassword = () => {
-    setToast({ message: 'Password reset link will be sent to your email.', type: 'success' });
-  };
+  // const handleSignUp = () => {
+  //   setToast({ message: 'Sign Up functionality coming soon!', type: 'error' });
+  // };
 
   return (
     <>
