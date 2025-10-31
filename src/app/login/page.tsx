@@ -136,7 +136,11 @@ export default function LoginPage() {
       const data = await makeSignedRequest(apiEndpoint, "POST", body);
       let msg = JSON.parse(data?.body);
       if (data?.statusCode === 200) {
+        let user = {name:'Ramesh',email:formData.email}
+        sessionStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.setItem('token', 'token');
         setToast({ message: msg?.message, type: 'success' });
+        handleServices();
       } else {
         setToast({ message: msg?.message, type: 'error' });
       }
@@ -150,6 +154,9 @@ export default function LoginPage() {
 
   const handleForgotPassword = () => {
     router.push('/forgotpassword/');
+  };
+  const handleServices = () => {
+    router.push('/services/');
   };
 
   // const handleSignUp = () => {
