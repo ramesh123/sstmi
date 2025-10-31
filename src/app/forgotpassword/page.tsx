@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import Tiles from '@/components/Tiles';
 import FloatingDonateButton from '@/components/FloatingDonateButton';
 import { makeSignedRequest } from '../app/../layout-client';
+import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -79,6 +80,7 @@ const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 
 const ForgotPassword: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const router = useRouter();
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -139,7 +141,9 @@ const ForgotPassword: React.FC = () => {
     formik.handleSubmit();
   };
 
-
+const handleLogin = () => {
+    router.push('/login/');
+  };
 
   return (
     <>
@@ -255,11 +259,8 @@ const ForgotPassword: React.FC = () => {
                         {/* Back to Login Link */}
                         <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
                           <a
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              alert('Navigate to login page');
-                            }}
+                            href="javascript:void(0);"
+                            onClick={handleLogin}
                             style={{
                               color: '#006B5C',
                               textDecoration: 'none',
