@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Checkout from '@/components/donate'
 import Footer from '@/components/Footer';
 import { X, Trash2, Plus, Minus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface Category {
   id: string;
@@ -31,6 +32,7 @@ export default function ServicesLayout() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCheckout, setShowCheckout] = useState<boolean>(false);
+  const router = useRouter();
 
   // Load cart from localStorage on component mount
   useEffect(() => {
@@ -115,6 +117,14 @@ export default function ServicesLayout() {
     setCart([]);
     localStorage.removeItem('shoppingCart');
   };
+  const placeorder = (): void => {
+    const user = sessionStorage.getItem('user');
+    if(user){
+      router.push('/payment/');
+    } else {
+    router.push('/login/');
+    }
+  }
 
   // Checkout Page
   if (showCheckout) {
@@ -364,11 +374,12 @@ export default function ServicesLayout() {
                     </div>
 
                     <button
-                      onClick={() => {
-                        alert('Order placed successfully!');
-                        clearCart();
-                        setShowCheckout(false);
-                      }}
+                      // onClick={() => {
+                      //   alert('Order placed successfully!');
+                      //   clearCart();
+                      //   setShowCheckout(false);
+                      // }}
+                      onClick={()=>placeorder()}
                       style={{
                         width: '100%',
                         backgroundColor: '#10B981',
@@ -389,7 +400,7 @@ export default function ServicesLayout() {
                     </button>
 
                     <button
-                      onClick={clearCart}
+                      onClick={()=>clearCart()}
                       style={{
                         width: '100%',
                         backgroundColor: '#FEE2E2',
@@ -627,22 +638,22 @@ export default function ServicesLayout() {
                     <button
                       onClick={() => addToCart(service)}
                       style={{
-                      width: '100%',
-                      backgroundColor: cart.find(item => item.id === service.id) ? '#10B981' : '#F97316',
-                      color: 'white',
-                      fontWeight: '600',
-                      padding: '0.75rem 1.5rem',
-                      borderRadius: '0.5rem',
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'background-color 0.3s'
-                    }}
+                        width: '100%',
+                        backgroundColor: cart.find(item => item.id === service.id) ? '#10B981' : '#F97316',
+                        color: 'white',
+                        fontWeight: '600',
+                        padding: '0.75rem 1.5rem',
+                        borderRadius: '0.5rem',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s'
+                      }}
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#EA580C'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F97316'}
                     >
-                      {cart.find(item => item.id === service.id) 
-                      ? `Added to Cart (${cart.find(item => item.id === service.id)?.quantity})` 
-                      : 'Add to Cart'}
+                      {cart.find(item => item.id === service.id)
+                        ? `Added to Cart (${cart.find(item => item.id === service.id)?.quantity})`
+                        : 'Add to Cart'}
                     </button>
                   </div>
                 ))}

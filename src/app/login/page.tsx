@@ -95,6 +95,12 @@ export default function LoginPage() {
     }));
   };
 
+  const getUsernameFromEmail = (email:string)=> {
+  if (!email) return '';
+  const [username] = email.split('@');
+  return username;
+}
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
@@ -136,7 +142,8 @@ export default function LoginPage() {
       const data = await makeSignedRequest(apiEndpoint, "POST", body);
       let msg = JSON.parse(data?.body);
       if (data?.statusCode === 200) {
-        let user = {name:'Ramesh',email:formData.email}
+        let username = getUsernameFromEmail(formData.email);
+        let user = {name:username,email:formData.email}
         sessionStorage.setItem('user', JSON.stringify(user));
         sessionStorage.setItem('token', 'token');
         setToast({ message: msg?.message, type: 'success' });

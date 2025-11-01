@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import Tiles from '@/components/Tiles';
 import FloatingDonateButton from '@/components/FloatingDonateButton';
 import { makeSignedRequest } from '../app/../layout-client';
+import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
@@ -94,6 +95,7 @@ const RegisterForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+const router = useRouter();
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -154,6 +156,7 @@ const RegisterForm: React.FC = () => {
     formik.resetForm();
     setPasswordStrength(0);
     setStrengthLabel('');
+    router.push('/login/');
     // if (!response.ok) throw new Error(data.message || "Registration failed");
 
     // setToast({ message: data.message, type: "success" });
