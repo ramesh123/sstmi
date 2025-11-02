@@ -142,8 +142,8 @@ export default function LoginPage() {
       const data = await makeSignedRequest(apiEndpoint, "POST", body);
       let msg = JSON.parse(data?.body);
       if (data?.statusCode === 200) {
-        let username = getUsernameFromEmail(formData.email);
-        let user = {name:username,email:formData.email}
+        //let username = getUsernameFromEmail(formData.email);
+        let user = {name:msg?.name,email:formData.email}
         sessionStorage.setItem('user', JSON.stringify(user));
         sessionStorage.setItem('token', 'token');
         setToast({ message: msg?.message, type: 'success' });

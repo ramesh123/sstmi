@@ -1,9 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import TopInfo from '@/components/TopInfo';
 import MainHeader from '@/components/TopInfo';
 import Navbar from '@/components/Navbar';
-import Checkout from '@/components/donate'
 import Footer from '@/components/Footer';
 import { X, Trash2, Plus, Minus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -11,15 +9,13 @@ import { useRouter } from 'next/navigation';
 interface Category {
   id: string;
   name: string;
-  icon: string;
 }
 
 interface Service {
-  id: number;
+  id: string;
   name: string;
   price: number;
   category: string;
-  icon: string;
   bgColor: string;
   borderColor: string;
 }
@@ -28,11 +24,88 @@ interface CartItem extends Service {
   quantity: number;
 }
 
+const cartArray = {
+  SevaServices: [
+    { name: "Punyahavachanam", donation_usd: 108 },
+    { name: "Namakaranam (Naming ceremony)", donation_usd: 51 },
+    { name: "Annaprashanam", donation_usd: 31 },
+    { name: "Kesha Kandana (Hair offering)", donation_usd: 31 },
+    { name: "Akshara Abhyasam", donation_usd: 31 },
+    { name: "Upanayanam", donation_usd: 201 },
+    { name: "Nischitartham (Betrothal ceremony)", donation_usd: 151 },
+    { name: "Hindu Wedding", donation_usd: 251 },
+    { name: "Seemantam", donation_usd: 151 },
+    { name: "Shashtipoorti Shanti (60th Birthday)", donation_usd: 201 },
+    { name: "Bhimaratha Shanthi (70th Birthday)", donation_usd: 201 },
+    { name: "Shathabhishekam (80th Birthday)", donation_usd: 201 },
+    { name: "Sathyanarayana Vratham", donation_usd: 108 },
+    { name: "Gruhapravesham, Vaastu Shanti", donation_usd: 151 },
+    { name: "Thirupaavai Ghoshti", donation_usd: 151 },
+    { name: "Hanuman Chalisa 108 times", donation_usd: 251 }
+  ],
+  Kalyanams: [
+    { name: "Valli Devasena Sahita Sri Subrahmanya Swamy Kalyanam", donation_usd: 251 },
+    { name: "SivaParvathi Kalyanam", donation_usd: 251 },
+    { name: "Sri SitaRama Kalayanam", donation_usd: 251 },
+    { name: "Sri Godha Kalayanam", donation_usd: 251 },
+    { name: "Sri Srinivasa Kalayanam", donation_usd: 251 }
+  ],
+  Homams: [
+    { name: "Gana Homam", donation_usd: 108 },
+    { name: "Navagraha & Shanthi Homam", donation_usd: 108 },
+    { name: "Kujagraha Shanthi Homam", donation_usd: 151 },
+    { name: "Asleshabali Pooja & Sarpasanthi Homam", donation_usd: 251 },
+    { name: "Shathru Samhara Homam", donation_usd: 251 },
+    { name: "Aayusha Homam", donation_usd: 151 },
+    { name: "Sri Sarasvati/Sri Lakshmi Hayagriva Homam", donation_usd: 108 },
+    { name: "Sri AstaLakshmi Homam", donation_usd: 108 },
+    { name: "Rudra Homam", donation_usd: 151 },
+    { name: "Maha Mrutyunjaya Homam", donation_usd: 151 },
+    { name: "Manyusukta Homam", donation_usd: 108 },
+    { name: "Maha Sudarshana Homam", donation_usd: 151 },
+    { name: "Raama Tharaka Homam", donation_usd: 108 },
+    { name: "Dhanvantari Homam", donation_usd: 108 },
+    { name: "Durga Homam", donation_usd: 108 },
+    { name: "Chandi Homam", donation_usd: 251 },
+    { name: "Gruhapravesham, Vaastu Shanti", donation_usd: 151 }
+  ]
+};
+
+
 export default function ServicesLayout() {
+  //const [cartArray, setCartArray] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCheckout, setShowCheckout] = useState<boolean>(false);
   const router = useRouter();
+
+  const categories: Category[] = Object.keys(cartArray).map(key => ({
+    id: key,
+    name: key.replace(/([A-Z])/g, ' $1').trim(),
+  }));
+
+  const services: Service[] = Object.entries(cartArray).flatMap(([category, items]) =>
+    items.map((item, index) => ({
+      id: `${category}-${index}`,
+      name: item.name,
+      price: item.donation_usd,
+      category: category,
+      bgColor: '#FFF3E0',
+      borderColor: '#FFB74D'
+    }))
+  );
+
+  // useEffect(() => {
+  //     fetch("https://sstmi-website.s3.us-east-1.amazonaws.com/assets/services.json")
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           throw new Error("Failed to fetch data");
+  //         }
+  //         return response.json();
+  //       })
+  //       .then((data: any[]) => setCartArray(data))
+  //       .catch((error) => console.error("Error loading Sevas data:", error));
+  //   }, []);
 
   // Load cart from localStorage on component mount
   useEffect(() => {
@@ -50,26 +123,6 @@ export default function ServicesLayout() {
   useEffect(() => {
     localStorage.setItem('shoppingCart', JSON.stringify(cart));
   }, [cart]);
-
-  const categories: Category[] = [
-    { id: 'design', name: 'Design', icon: '🎨' },
-    { id: 'development', name: 'Development', icon: '💻' },
-    { id: 'marketing', name: 'Marketing', icon: '📱' },
-    { id: 'consulting', name: 'Consulting', icon: '💼' },
-    { id: 'writing', name: 'Writing', icon: '✍️' }
-  ];
-
-  const services: Service[] = [
-    { id: 1, name: 'Logo Design', price: 299, category: 'design', icon: '🎨', bgColor: '#FFF8E1', borderColor: '#FFD54F' },
-    { id: 2, name: 'Web Development', price: 1999, category: 'development', icon: '💻', bgColor: '#E3F2FD', borderColor: '#64B5F6' },
-    { id: 3, name: 'Social Media Marketing', price: 599, category: 'marketing', icon: '📱', bgColor: '#FCE4EC', borderColor: '#F48FB1' },
-    { id: 4, name: 'Business Consulting', price: 799, category: 'consulting', icon: '💼', bgColor: '#F3E5F5', borderColor: '#BA68C8' },
-    { id: 5, name: 'Content Writing', price: 399, category: 'writing', icon: '✍️', bgColor: '#E8F5E9', borderColor: '#81C784' },
-    { id: 6, name: 'Brand Identity', price: 899, category: 'design', icon: '🎯', bgColor: '#FFF8E1', borderColor: '#FFD54F' },
-    { id: 7, name: 'Mobile App Development', price: 2999, category: 'development', icon: '📲', bgColor: '#E3F2FD', borderColor: '#64B5F6' },
-    { id: 8, name: 'SEO Optimization', price: 699, category: 'marketing', icon: '🔍', bgColor: '#FCE4EC', borderColor: '#F48FB1' },
-    { id: 9, name: 'Strategy Planning', price: 999, category: 'consulting', icon: '📊', bgColor: '#F3E5F5', borderColor: '#BA68C8' }
-  ];
 
   const filteredServices: Service[] = selectedCategory === 'all'
     ? services
@@ -89,11 +142,11 @@ export default function ServicesLayout() {
     }
   };
 
-  const removeFromCart = (serviceId: number): void => {
+  const removeFromCart = (serviceId: string): void => {
     setCart(cart.filter(item => item.id !== serviceId));
   };
 
-  const updateQuantity = (serviceId: number, newQuantity: number): void => {
+  const updateQuantity = (serviceId: string, newQuantity: number): void => {
     if (newQuantity <= 0) {
       removeFromCart(serviceId);
     } else {
@@ -117,12 +170,13 @@ export default function ServicesLayout() {
     setCart([]);
     localStorage.removeItem('shoppingCart');
   };
+
   const placeorder = (): void => {
     const user = sessionStorage.getItem('user');
-    if(user){
+    if (user) {
       router.push('/payment/');
     } else {
-    router.push('/login/');
+      router.push('/login/');
     }
   }
 
@@ -138,7 +192,6 @@ export default function ServicesLayout() {
           padding: '3rem 1.5rem'
         }}>
           <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-            {/* Header */}
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -209,7 +262,6 @@ export default function ServicesLayout() {
               </div>
             ) : (
               <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-                {/* Cart Items */}
                 <div style={{ flex: '1 1 500px' }}>
                   <div style={{
                     backgroundColor: 'white',
@@ -239,8 +291,6 @@ export default function ServicesLayout() {
                         alignItems: 'center',
                         flexWrap: 'wrap'
                       }}>
-                        <div style={{ fontSize: '2.5rem' }}>{item.icon}</div>
-
                         <div style={{ flex: 1, minWidth: '150px' }}>
                           <h3 style={{
                             fontSize: '1.125rem',
@@ -265,12 +315,12 @@ export default function ServicesLayout() {
                               border: '1px solid #D1D5DB',
                               backgroundColor: 'white',
                               cursor: 'pointer',
-                              fontSize: '1.125rem',
-                              fontWeight: 'bold',
-                              color: '#6B7280'
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }}
                           >
-                            <Minus size={20} className="text-amber-900" />
+                            <Minus size={16} color="#92400E" />
                           </button>
                           <span style={{
                             width: '40px',
@@ -289,12 +339,12 @@ export default function ServicesLayout() {
                               border: '1px solid #D1D5DB',
                               backgroundColor: 'white',
                               cursor: 'pointer',
-                              fontSize: '1.125rem',
-                              fontWeight: 'bold',
-                              color: '#6B7280'
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }}
                           >
-                            <Plus size={20} className="text-amber-900" />
+                            <Plus size={16} color="#92400E" />
                           </button>
                         </div>
 
@@ -306,7 +356,7 @@ export default function ServicesLayout() {
                             border: 'none',
                             borderRadius: '0.375rem',
                             cursor: 'pointer',
-                            fontWeight: '600',
+                            backgroundColor: '#FEE2E2',
                             transition: 'background-color 0.3s'
                           }}
                           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FECACA'}
@@ -319,7 +369,6 @@ export default function ServicesLayout() {
                   </div>
                 </div>
 
-                {/* Order Summary */}
                 <div style={{ flex: '1 1 300px' }}>
                   <div style={{
                     backgroundColor: 'white',
@@ -374,12 +423,7 @@ export default function ServicesLayout() {
                     </div>
 
                     <button
-                      // onClick={() => {
-                      //   alert('Order placed successfully!');
-                      //   clearCart();
-                      //   setShowCheckout(false);
-                      // }}
-                      onClick={()=>placeorder()}
+                      onClick={placeorder}
                       style={{
                         width: '100%',
                         backgroundColor: '#10B981',
@@ -400,7 +444,7 @@ export default function ServicesLayout() {
                     </button>
 
                     <button
-                      onClick={()=>clearCart()}
+                      onClick={clearCart}
                       style={{
                         width: '100%',
                         backgroundColor: '#FEE2E2',
@@ -423,7 +467,6 @@ export default function ServicesLayout() {
             )}
           </div>
         </div><Footer />
-        {/* <FloatingDonateButton /> */}
       </>
     );
   }
@@ -439,7 +482,6 @@ export default function ServicesLayout() {
         padding: '3rem 1.5rem'
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          {/* Cart Button */}
           <div style={{
             display: 'flex',
             justifyContent: 'flex-end',
@@ -459,8 +501,7 @@ export default function ServicesLayout() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                transition: 'background-color 0.3s',
-                position: 'relative'
+                transition: 'background-color 0.3s'
               }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#EA580C'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F97316'}
@@ -486,7 +527,6 @@ export default function ServicesLayout() {
           </div>
 
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-            {/* Left Sidebar - Category Menu */}
             <aside style={{
               width: '250px',
               flexShrink: 0,
@@ -526,12 +566,6 @@ export default function ServicesLayout() {
                       color: selectedCategory === 'all' ? 'white' : '#374151',
                       boxShadow: selectedCategory === 'all' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
                     }}
-                    onMouseEnter={(e) => {
-                      if (selectedCategory !== 'all') e.currentTarget.style.backgroundColor = '#F3F4F6';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (selectedCategory !== 'all') e.currentTarget.style.backgroundColor = '#F9FAFB';
-                    }}
                   >
                     All Services
                   </button>
@@ -552,22 +586,13 @@ export default function ServicesLayout() {
                         color: selectedCategory === category.id ? 'white' : '#374151',
                         boxShadow: selectedCategory === category.id ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
                       }}
-                      onMouseEnter={(e) => {
-                        if (selectedCategory !== category.id) e.currentTarget.style.backgroundColor = '#F3F4F6';
-                      }}
-                      onMouseLeave={(e) => {
-                        if (selectedCategory !== category.id) e.currentTarget.style.backgroundColor = '#F9FAFB';
-                      }}
-                    >
-                      <span style={{ marginRight: '0.5rem' }}>{category.icon}</span>
-                      {category.name}
+                    >{category.name}
                     </button>
                   ))}
                 </nav>
               </div>
             </aside>
 
-            {/* Right Side - Services Section */}
             <section style={{ flex: 1, minWidth: '300px' }}>
               <h1 style={{
                 fontSize: '2.5rem',
@@ -606,21 +631,17 @@ export default function ServicesLayout() {
                     onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'}
                     onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'}
                   >
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      marginBottom: '1rem',
-                      fontSize: '4rem'
-                    }}>
-                      {service.icon}
-                    </div>
 
                     <h3 style={{
                       color: '#78350F',
                       fontSize: '1.25rem',
                       fontWeight: '600',
                       textAlign: 'center',
-                      marginBottom: '1.5rem'
+                      marginBottom: '1.5rem',
+                      minHeight: '60px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}>
                       {service.name}
                     </h3>
@@ -648,8 +669,14 @@ export default function ServicesLayout() {
                         cursor: 'pointer',
                         transition: 'background-color 0.3s'
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#EA580C'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F97316'}
+                      onMouseEnter={(e) => {
+                        const isInCart = cart.find(item => item.id === service.id);
+                        e.currentTarget.style.backgroundColor = isInCart ? '#059669' : '#EA580C';
+                      }}
+                      onMouseLeave={(e) => {
+                        const isInCart = cart.find(item => item.id === service.id);
+                        e.currentTarget.style.backgroundColor = isInCart ? '#10B981' : '#F97316';
+                      }}
                     >
                       {cart.find(item => item.id === service.id)
                         ? `Added to Cart (${cart.find(item => item.id === service.id)?.quantity})`
@@ -670,7 +697,6 @@ export default function ServicesLayout() {
           </div>
         </div>
       </div><Footer />
-      {/* <FloatingDonateButton /> */}
     </>
   );
 }
