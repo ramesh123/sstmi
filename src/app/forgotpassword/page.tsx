@@ -110,11 +110,15 @@ const ForgotPassword: React.FC = () => {
         });
       });
 
-      const apiEndpoint = "https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/ForgotPassword";
-
-      const body = { body: JSON.stringify({ email:values.email }) };   
-
-      const data = await makeSignedRequest(apiEndpoint, "POST", body);
+     const jsonObj = { body: JSON.stringify({ email:values.email }) };   
+      const response = await fetch("https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/ForgotPassword", {
+      method: "POST",
+      headers: {
+      "Content-Type": "application/json"
+      },
+      body: JSON.stringify(jsonObj)
+      });
+      const data = await response.json();
       let msg = JSON.parse(data?.body);
       if (data?.statusCode === 200) {
       setToast({ message: msg?.message || 'Password reset link sent!', type: 'success' });
