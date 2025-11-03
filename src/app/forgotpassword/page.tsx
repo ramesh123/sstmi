@@ -110,22 +110,16 @@ const ForgotPassword: React.FC = () => {
         });
       });
 
-      const apiEndpoint = "https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/user/login";
+      const apiEndpoint = "https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/ForgotPassword";
 
-      const body = {
-        action: "LoginUser",
-        user: {
-          Email: values.email,
-        },
-        token: token,
-      };
+      const body = { body: JSON.stringify({ email:values.email }) };   
 
       const data = await makeSignedRequest(apiEndpoint, "POST", body);
       let msg = JSON.parse(data?.body);
       if (data?.statusCode === 200) {
-        setToast({ message: msg?.message, type: 'success' });
+      setToast({ message: msg?.message || 'Password reset link sent!', type: 'success' });
       } else {
-        setToast({ message: msg?.message, type: 'error' });
+      setToast({ message: msg?.message || 'Something went wrong', type: 'error' });
       }
       formik.resetForm();
     } catch (error) {
