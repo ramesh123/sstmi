@@ -294,14 +294,6 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     <button
-                      onClick={() => handleSort('IsActive')}
-                      className="flex items-center gap-2 hover:text-blue-600 transition"
-                    >
-                      Status {getSortIcon('IsActive')}
-                    </button>
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    <button
                       onClick={() => handleSort('CreatedAt')}
                       className="flex items-center gap-2 hover:text-blue-600 transition"
                     >
@@ -313,7 +305,7 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
                       onClick={() => handleSort('CreatedAt')}
                       className="flex items-center gap-2 hover:text-blue-600 transition"
                     >
-                      Action
+                      Status
                     </button>
                   </th>
                 </tr>
@@ -333,15 +325,6 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
                           {getRoleName(row.RoleId)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          row.IsActive
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {row.IsActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {formatDate(row.CreatedAt)}
                       </td>
@@ -354,17 +337,21 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
                             onChange={() => handleToggleStatus(row)}
                             className="sr-only peer"
                           />
-                          <div className={`w-11 h-6 bg-gray-200 rounded-full peer 
-                            peer-focus:ring-4 peer-focus:ring-blue-300 
-                            dark:peer-focus:ring-blue-800 
-                            peer-checked:after:translate-x-full 
-                            peer-checked:after:border-white 
-                            after:content-[''] after:absolute after:top-0.5 after:left-0.5 
-                            after:bg-white after:border-gray-300 after:border after:rounded-full 
-                            after:h-5 after:w-5 after:transition-all 
-                            ${row.IsActive ? 'bg-blue-600' : 'bg-gray-400'} 
-                            ${updatingId === row.UserId ? 'opacity-60' : ''}`}
-                          />
+                          <div
+  className={`w-11 h-6 rounded-full peer 
+              peer-focus:ring-4 peer-focus:ring-blue-300 
+              dark:peer-focus:ring-blue-800 
+              peer-checked:after:translate-x-full 
+              peer-checked:after:border-white 
+              after:content-[''] after:absolute after:top-0.5 after:left-0.5 
+              after:bg-white after:border-gray-300 after:border after:rounded-full 
+              after:h-5 after:w-5 after:transition-all 
+              ${row.IsActive 
+                ? 'bg-green-600 peer-checked:bg-green-600' 
+                : 'bg-red-600 peer-checked:bg-red-600'
+              } 
+              ${updatingId === row.UserId ? 'opacity-60' : ''}`}
+/>
                           {updatingId === row.UserId && (
                             <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
