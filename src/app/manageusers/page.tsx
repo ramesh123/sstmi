@@ -246,7 +246,7 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-            <h2 className="text-2xl font-bold text-gray-800">User Management</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Manage Users</h2>
           </div>
 
           {/* Search Bar */}
