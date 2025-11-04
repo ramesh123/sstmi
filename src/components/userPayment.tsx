@@ -26,9 +26,10 @@ interface CheckoutPageProps {
 }
 
 
-const CheckoutPage: React.FC<CheckoutPageProps> = ({initialName, initialEmail, initialAmount}) => {
+const CheckoutPage: React.FC<CheckoutPageProps> = ({ initialName, initialEmail, initialAmount }) => {
   const [loading, setLoading] = useState(false);
-  // const [message, setMessage] = useState("");
+  const [userStar, setUserStar] = useState('');
+  const [userGothram, setUserGothram] = useState('');
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -66,6 +67,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({initialName, initialEmail, i
         name: initialName,
         email: initialEmail,
         purpose: "General Donation",
+        // star: userStar,
+        // gothram: userGothram,
         cognitoIdentityId: getCognitoIdentityId(),
         success_url: `https://www.sstmi.org/paymentsuccess`,
         cancel_url: `https://www.sstmi.org/paymentfailed`
@@ -82,7 +85,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({initialName, initialEmail, i
       const responseBody = JSON.parse(responseData.body);
       const sessionId = responseBody.sessionId;
 
-      
+
       if (!sessionId) {
         throw new Error('No session ID returned from the API');
       }
@@ -167,7 +170,21 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({initialName, initialEmail, i
       </div>
 
       <div className="credit-card-section bg-white p-4 rounded-lg shadow-md mb-6 max-w-md mx-auto">
-      <form className="space-y-4">
+        <form className="space-y-4">
+          <input
+            type="text"
+            placeholder="Enter the Star"
+            value={userStar}
+            onChange={(e) => setUserStar(e.target.value)}
+            className="w-full p-3 border rounded-lg"
+          />
+          <input
+            type="text"
+            placeholder="Enter the Gothram"
+            value={userGothram}
+            onChange={(e) => setUserGothram(e.target.value)}
+            className="w-full p-3 border rounded-lg"
+          />
           <button
             type="button"
             onClick={handleCheckout}
@@ -198,8 +215,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({initialName, initialEmail, i
           <strong className="text-indigo-900">Murugar Blessings!</strong>
         </p>
       </div>
-          {/* Add this line */}
-    <ToastContainer position="top-right" autoClose={5000} />
+      {/* Add this line */}
+      <ToastContainer position="top-right" autoClose={5000} />
     </div>
   );
 };

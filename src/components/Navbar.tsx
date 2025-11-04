@@ -79,6 +79,11 @@ export default function Navbar() {
               Contact
             </button>
           </li>
+              <li>
+                <button onClick={() => handleNavigation('/manageusers/')} className="hover:text-brightRed">
+                  Manage Users
+                </button>
+              </li>
           {!isLoggedIn && (
             <>
               <li>
