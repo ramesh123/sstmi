@@ -128,8 +128,6 @@ const RegisterForm: React.FC = () => {
       });
       const data = await response.json();
       let msg = JSON.parse(data?.body);
-        console.log("Token data:", data);
-        console.log("Token:", msg);
 
       if (data?.statusCode === 200) {
         setToast({ message: msg?.message || 'New Password Updated Successfully', type: 'success' });

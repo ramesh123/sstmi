@@ -88,6 +88,7 @@ const DataTable: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage: number = 10;
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const getRoleName = (roleId: number): string => {
@@ -195,6 +196,36 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
     }
   };
 
+  const handleToggleStatus = async (item: User) => {
+    const newStatus = !item.IsActive;
+    const userid = item.UserId;
+    const optimisticUser = { ...item, IsActive: newStatus };
+    //setListUsers(prev => prev.map(u => (u.UserId === item.UserId ? optimisticUser : u)));
+   // setUpdatingId(item.UserId);
+    try {
+      const jsonObj = { body: JSON.stringify({ UserId: userid, IsActive: newStatus }) };
+      const response = await fetch("https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/UpdateUserStatus", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(jsonObj)
+      });
+      const data = await response.json();
+      let msg = JSON.parse(data?.body);
+      if (msg?.message) {
+        setToast({ message: msg?.message || 'Updated Successfully', type: 'success' });
+        getUsersList();
+      } else {
+        setToast({ message: msg?.message || 'Something went wrong', type: 'error' });
+      }
+    } catch (error) {
+      setToast({ message: "An error occurred. Please try again later.", type: 'error' });
+    } finally {
+     // setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     getUsersList();
   }, []);
@@ -277,6 +308,14 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
                       Created At {getSortIcon('CreatedAt')}
                     </button>
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <button
+                      onClick={() => handleSort('CreatedAt')}
+                      className="flex items-center gap-2 hover:text-blue-600 transition"
+                    >
+                      Action
+                    </button>
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -305,6 +344,34 @@ const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' 
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {formatDate(row.CreatedAt)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={row.IsActive}
+                            disabled={updatingId === row.UserId}
+                            onChange={() => handleToggleStatus(row)}
+                            className="sr-only peer"
+                          />
+                          <div className={`w-11 h-6 bg-gray-200 rounded-full peer 
+                            peer-focus:ring-4 peer-focus:ring-blue-300 
+                            dark:peer-focus:ring-blue-800 
+                            peer-checked:after:translate-x-full 
+                            peer-checked:after:border-white 
+                            after:content-[''] after:absolute after:top-0.5 after:left-0.5 
+                            after:bg-white after:border-gray-300 after:border after:rounded-full 
+                            after:h-5 after:w-5 after:transition-all 
+                            ${row.IsActive ? 'bg-blue-600' : 'bg-gray-400'} 
+                            ${updatingId === row.UserId ? 'opacity-60' : ''}`}
+                          />
+                          {updatingId === row.UserId && (
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-600 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                            </svg>
+                          )}
+                        </label>
                       </td>
                     </tr>
                   ))
