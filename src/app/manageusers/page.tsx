@@ -123,8 +123,8 @@ const EditUserModal = ({ user, onClose, onUpdate }: { user: User; onClose: () =>
           IsActive: formData.IsActive
         }) 
       };
-      
-      const response = await fetch("https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/UpdateUser", {
+
+      const response = await fetch("https://nfgfx2bpj6.execute-api.us-east-1.amazonaws.com/ProdUser/updateUserInfo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
