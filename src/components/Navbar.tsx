@@ -84,6 +84,11 @@ export default function Navbar() {
                   Manage Users
                 </button>
               </li>
+              <li>
+                <button onClick={() => handleNavigation('/faq/')} className="hover:text-brightRed">
+                  FAQ
+                </button>
+              </li>
           {!isLoggedIn && (
             <>
               <li>

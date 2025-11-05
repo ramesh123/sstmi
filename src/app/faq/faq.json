@@ -1,0 +1,50 @@
+[
+  {
+    "question": "What are the temple visiting hours?",
+    "answer": "The temple is open from 9:00 AM to 8:00 PM on weekdays and 8:00 AM to 9:00 PM on weekends and festival days. Special puja timings may vary, so please check our events calendar for specific dates."
+  },
+  {
+    "question": "How can I book a special puja or service?",
+    "answer": "You can book special pujas and services online through our website's 'Services' section or by contacting the temple office directly. Advance booking is recommended, especially during festival seasons."
+  },
+  {
+    "question": "Are donations tax-deductible?",
+    "answer": "Yes, SSS Temple is a registered 501(c)(3) nonprofit organization. All donations are tax-deductible to the extent allowed by law. You will receive a receipt for your donation for tax purposes."
+  },
+  {
+    "question": "What payment methods do you accept?",
+    "answer": "We accept multiple payment methods including credit/debit cards, Venmo, PayPal, Zelle, and checks. Online payments are processed securely through Stripe."
+  },
+  {
+    "question": "Can I volunteer at the temple?",
+    "answer": "Yes, we welcome volunteers! Please visit our 'Volunteer' page or contact the temple office to learn about current volunteer opportunities and how you can contribute to our community."
+  },
+  {
+    "question": "What is the dress code for temple visits?",
+    "answer": "We request visitors to dress modestly out of respect for the sacred space. Traditional Indian attire is preferred but not mandatory. Please remove shoes before entering the main temple hall."
+  },
+  {
+    "question": "Do you offer prasadam after pujas?",
+    "answer": "Yes, prasadam is distributed after major pujas and on special occasions. The timing and availability depend on the specific puja or festival."
+  },
+  {
+    "question": "How can I become a temple member?",
+    "answer": "Temple membership is open to all devotees. You can register for membership through our website or at the temple office. Members receive benefits such as priority booking for services and newsletters."
+  },
+  {
+    "question": "Are there any educational programs for children?",
+    "answer": "Yes, we offer various educational programs including Sanskrit classes, devotional music classes, and religious studies for children. Please check our 'Programs' section for schedules and registration details."
+  },
+  {
+    "question": "What happens if I need to cancel a booked service?",
+    "answer": "Cancellations must be made at least 48 hours in advance for a full refund. Cancellations made within 48 hours may be subject to a cancellation fee. Please contact the temple office for specific cancellation policies."
+  },
+  {
+    "question": "Is photography allowed inside the temple?",
+    "answer": "Photography is generally allowed in designated areas, but not during active pujas or in the main sanctum. Please be respectful and ask temple staff if you're unsure about specific locations."
+  },
+  {
+    "question": "How can I sponsor a festival or event?",
+    "answer": "Festival and event sponsorships are available at various levels. Please contact our development office or visit the 'Sponsorship' section on our website for more information about sponsorship opportunities and benefits."
+  }
+]
