@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { makeSignedRequest, getCognitoIdentityId } from '../app/layout-client';
 import ServiceTypeahead from "./ServiceTypeAhead";
@@ -24,11 +24,19 @@ interface CheckoutPageProps {
   initialPurpose?: string;
   initialName?: string;
 }
+interface ServiceItem {
+  id: string | number;
+  name: string;
+  category: string;
+  quantity: number;
+  price: number;
+}
 
 
 const CheckoutPage: React.FC<CheckoutPageProps> = ({ initialName, initialEmail, initialAmount }) => {
   const [loading, setLoading] = useState(false);
   const [userStar, setUserStar] = useState('');
+  const [services, setServices] = useState<ServiceItem[]>([]);
   const [userGothram, setUserGothram] = useState('');
 
   const handleCheckout = async () => {
@@ -66,7 +74,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ initialName, initialEmail, 
         amount: Number(initialAmount) * 100,
         name: initialName,
         email: initialEmail,
-        purpose: "General Donation",
+        purpose: "Buy a Service",
         // star: userStar,
         // gothram: userGothram,
         cognitoIdentityId: getCognitoIdentityId(),
@@ -75,7 +83,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ initialName, initialEmail, 
       };
 
       log("Request body:", JSON.stringify(body));
-
       log("Sending request to API");
       const responseData = await makeSignedRequest(endpoint, "POST", body);
 
@@ -121,27 +128,77 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ initialName, initialEmail, 
     });
   };
 
+const loadServices = () => {
+  const cartData = localStorage.getItem('shoppingCart');
+  if (cartData) {
+    setServices(JSON.parse(cartData));
+  }
+};
+
+  useEffect(() => {
+    loadServices();
+  }, []);
 
   return (
     <div className="checkout-container max-w-4xl mx-auto p-6 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg shadow-lg">
-      <div className="sloka text-center mb-6">
-        <p className="sanskrit text-xl font-bold text-teal-900">
-          Paropakāreṇa cittashuddhiḥ saadhyate |
-        </p>
-        <p className="sanskrit text-xl font-bold text-teal-900">
-          Ātmajñānena mokshaḥ sampadhyate ||
-        </p>
-        <p className="translation text-md text-indigo-900">
-          "Serving others purifies the heart. Spiritual knowledge leads to liberation."
-        </p>
-      </div>
-
-      <h1 className="text-2xl font-bold text-center  text-teal-900 mb-4">Make a Donation</h1>
-
+      <h1 className="text-2xl font-bold text-center  text-teal-900 mb-4">Buy a Service</h1>
+     <div className="max-w-4xl mx-auto">
+         {services?.length > 0 && (
+  <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+    <table className="w-full">
+      <thead>
+        <tr className="border-b-2">
+          <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+            Service Name
+          </th>
+          <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+            Category
+          </th>
+          <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700 uppercase tracking-wider">
+            Quantity
+          </th>
+          <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700 uppercase tracking-wider">
+            Price
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-200">
+        {services.map((item) => (
+          <tr
+            key={item.id}
+            className="hover:bg-orange-50 transition-colors duration-150"
+          >
+            <td className="px-6 py-4 text-gray-800 font-medium">
+              {item.name}
+            </td>
+            <td className="px-6 py-4 text-gray-600">
+              {item.category}
+            </td>
+            <td className="px-6 py-4 text-center text-gray-600">
+              {item.quantity}
+            </td>
+            <td className="px-6 py-4 text-right text-gray-800 font-semibold">
+              ₹{item.price}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+      <tfoot>
+        <tr className="border-t-2">
+          <td colSpan={3} className="px-6 py-4 text-right font-semibold text-gray-700">
+            Total:
+          </td>
+          <td className="px-6 py-4 text-right font-bold text-lg text-gray-800">
+            ₹{services.reduce((sum, service) => sum + (service.price * service.quantity), 0)}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+)}
+        </div>
+    
       <div className="info-section mb-6">
-        <p className="text-center font-medium  text-indigo-900 mb-4">
-          Please contribute to <strong>donations@sstmi.org</strong>.
-        </p>
         <div className="flex justify-center space-x-4">
           <a
             href="https://venmo.com/code?user_id=4092019295127046995"
