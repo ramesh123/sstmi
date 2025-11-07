@@ -80,11 +80,6 @@ export default function Navbar() {
             </button>
           </li>
               <li>
-                <button onClick={() => handleNavigation('/manageusers/')} className="hover:text-brightRed">
-                  Manage Users
-                </button>
-              </li>
-              <li>
                 <button onClick={() => handleNavigation('/faq/')} className="hover:text-brightRed">
                   FAQ
                 </button>
