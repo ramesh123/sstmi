@@ -21,7 +21,7 @@ export default function Home() {
         <Sloka />
 
         {/* Heading before Events */}
-        <h2 className="text-2xl font-bold text-darkGreen text-center mt-4 mb-0">
+        <h2 className="text-2xl font-bold text-darkGreen text-center mt-10 mb-0">
           Upcoming Events:
         </h2>
         <div className="-mt-0">
