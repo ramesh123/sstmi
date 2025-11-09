@@ -5,11 +5,13 @@ import MainHeader from '@/components/TopInfo';
 import Navbar from '@/components/Navbar';
 import UserPayment from '@/components/userPayment';
 import Footer from '@/components/Footer';
+import { useRouter } from 'next/navigation';
 
 export default function Payment() {
   const [initialName, setInitialName] = useState('');
   const [initialEmail, setInitialEmail] = useState('');
   const [initialAmount, setInitialAmount] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     // only run in the browser
@@ -20,6 +22,8 @@ export default function Payment() {
       const userData = JSON.parse(user);
       setInitialName(userData.name);
       setInitialEmail(userData.email);
+    } else {
+      router.push('/login/');
     }
 
     if (cart) {
