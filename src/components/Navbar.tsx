@@ -45,6 +45,11 @@ export default function Navbar() {
             </button>
           </li>
           <li>
+            <button onClick={() => handleNavigation('/about/')} className="hover:text-brightRed">
+              About
+            </button>
+          </li>
+          <li>
             <button onClick={() => handleNavigation('/events/')} className="hover:text-brightRed">
               Events
             </button>

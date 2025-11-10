@@ -14,7 +14,7 @@ export default function MainHeader() {
         {/* Text Section */}
         <div className="mt-4 md:mt-0 md:ml-6 flex-grow text-center md:text-left">
           {/* Title */}
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold uppercase tracking-wide bg-gradient-to-r from-darkRed to-brightRed bg-clip-text text-transparent text-shadow-md leading-tight md:leading-snug">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold uppercase tracking-wide bg-gradient-to-r from-darkRed to-brightRed bg-clip-text text-transparent text-shadow-md leading-tight md:leading-snug text-center">
             Sri Subramanya Swamy Cultural Center
           </h1>
 
