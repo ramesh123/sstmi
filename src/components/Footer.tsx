@@ -115,7 +115,7 @@ export default function Footer() {
                 <span>Facebook</span>
               </a>
               <a
-                href="https://www.instagram.com/srisubramanyaswamytemple"
+                href="https://www.instagram.com/srisubramanyaswamykovil?igsh=NmVlbmFkd3k5czhx&utm_source=qr"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 bg-white p-3 rounded-lg shadow-md hover:shadow-lg transition"
