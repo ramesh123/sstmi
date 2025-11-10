@@ -19,17 +19,17 @@ export default function MainHeader() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-base md:text-lg lg:text-xl font-semibold text-darkGreen tracking-wide text-shadow-sm">
+          <p className="text-base md:text-lg lg:text-xl font-semibold text-darkGreen tracking-wide text-shadow-sm text-center">
             MURUGAR KOVIL
           </p>
 
           {/* Address */}
-          <p className="text-xs md:text-sm lg:text-base text-darkRed font-medium mt-2 leading-normal">
+          <p className="text-xs md:text-sm lg:text-base text-darkRed font-medium mt-2 leading-normal text-center">
             31618 Grand River Ave, Farmington, MI 48336
           </p>
 
           {/* Non-Profit Info */}
-          <p className="text-xs md:text-sm lg:text-base font-medium text-darkGreen mt-2 leading-normal">
+          <p className="text-xs md:text-sm lg:text-base font-medium text-darkGreen mt-2 leading-normal text-center">
             501(C)(3) Non-profit Organization
           </p>
         </div>

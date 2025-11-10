@@ -39,7 +39,8 @@ export default function Carousel() {
   }, [xmlUrl]);
 
   return (
-    <div className="mx-auto w-full max-w-screen-lg px-2">
+    // <div className="mx-auto w-full max-w-screen-lg px-2">
+    <div className="mx-auto w-full px-2">
       <Swiper
         modules={[Navigation, Pagination, A11y]}
         spaceBetween={10}
