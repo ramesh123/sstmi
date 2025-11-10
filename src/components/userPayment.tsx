@@ -38,6 +38,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ initialName, initialEmail, 
   const [userStar, setUserStar] = useState('');
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [userGothram, setUserGothram] = useState('');
+  const [userNakshatram, setUserNakshatram] = useState('');
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -74,9 +75,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({ initialName, initialEmail, 
         amount: Number(initialAmount) * 100,
         name: initialName,
         email: initialEmail,
-        purpose: "Buy a Service",
-        // star: userStar,
-        // gothram: userGothram,
+        purpose: "Cart",
+        gothram: userGothram,
+        nakshatram: userNakshatram,
         cognitoIdentityId: getCognitoIdentityId(),
         success_url: `https://www.sstmi.org/paymentsuccess`,
         cancel_url: `https://www.sstmi.org/paymentfailed`
@@ -141,7 +142,7 @@ const loadServices = () => {
 
   return (
     <div className="checkout-container max-w-4xl mx-auto p-6 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold text-center  text-teal-900 mb-4">Buy a Service</h1>
+      <h1 className="text-2xl font-bold text-center  text-teal-900 mb-4">Cart</h1>
      <div className="max-w-4xl mx-auto">
          {services?.length > 0 && (
   <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
@@ -230,16 +231,16 @@ const loadServices = () => {
         <form className="space-y-4">
           <input
             type="text"
-            placeholder="Enter the Star"
-            value={userStar}
-            onChange={(e) => setUserStar(e.target.value)}
+            placeholder="Enter the Gothram"
+            value={userGothram}
+            onChange={(e) => setUserGothram(e.target.value)}
             className="w-full p-3 border rounded-lg"
           />
           <input
             type="text"
-            placeholder="Enter the Gothram"
-            value={userGothram}
-            onChange={(e) => setUserGothram(e.target.value)}
+            placeholder="Enter the Nakshatram"
+            value={userNakshatram}
+            onChange={(e) => setUserNakshatram(e.target.value)}
             className="w-full p-3 border rounded-lg"
           />
           <button
