@@ -38,16 +38,16 @@ const Tiles = () => {
           {/* Repeat for other 5 tiles with same structure but different images and text */}
           <div
             className="relative aspect-[3/4] rounded-[1vh] overflow-hidden cursor-pointer transition-transform duration-300 hover:-translate-y-[5px] hover:shadow-lg"
-            onClick={() => router.push("/mahaposhaka/")}
+            onClick={() => router.push("/aalayaposhaka/")}
           >
             <Image
               src="https://sstmi-website.s3.us-east-1.amazonaws.com/assets/tiles/mahapoksha_small.jpg"
-              alt="Mahaposhaka"
+              alt="Aalayaposhaka"
               fill
               className="object-cover"
             />
             <span className="absolute bottom-0 left-0 right-0 p-[1vh] bg-white/80 text-[1.6vh] text-center text-[#034c59]">
-              Mahaposhaka
+              Aalayaposhaka
             </span>
           </div>
 

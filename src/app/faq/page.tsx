@@ -4,22 +4,39 @@ import MainHeader from '@/components/TopInfo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ChevronDown, ChevronUp, Search, HelpCircle } from 'lucide-react';
-import faqData from './faq.json';
 
 interface FAQItem {
-  id: number;
   question: string;
   answer: string;
-  category: string;
 }
 
 const Faq: React.FC = () => {
+  const [faqData, setFaqData] = useState<FAQItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [openId, setOpenId] = useState<number | null>(null);
 
   const toggleFaq = (id: number) => {
     setOpenId(openId === id ? null : id);
   };
+  
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("http://sstmi-website.s3.us-east-1.amazonaws.com/assets/faq.json", { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data: FAQItem[]) => {
+        setFaqData(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+       setIsLoading(false);
+      });
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <>
@@ -32,10 +49,7 @@ const Faq: React.FC = () => {
             <h1 className="text-4xl font-bold text-gray-800 mb-2">Frequently Asked Questions</h1>
             <p className="text-gray-600 text-lg">Find answers to common questions about our temple</p>
           </div>
-
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-
-
             <div className="divide-y divide-gray-200">
               {faqData.length > 0 ? (
                 faqData.map((faq,index) => (
