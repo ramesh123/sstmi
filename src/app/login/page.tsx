@@ -95,12 +95,6 @@ export default function LoginPage() {
     }));
   };
 
-  const getUsernameFromEmail = (email:string)=> {
-  if (!email) return '';
-  const [username] = email.split('@');
-  return username;
-}
-
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
@@ -223,7 +217,7 @@ export default function LoginPage() {
                   <input
                     type="email"
                     name="email"
-                    placeholder="E-Mail / User ID"
+                    placeholder="E-Mail"
                     value={formData.email}
                     onChange={handleInputChange}
                     disabled={isLoading}

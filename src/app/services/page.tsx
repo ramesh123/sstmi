@@ -96,7 +96,7 @@ export default function ServicesLayout() {
   );
 
   // useEffect(() => {
-  //     fetch("https://sstmi-website.s3.us-east-1.amazonaws.com/assets/services.json")
+  //     fetch("https://sstmi-admin-portal.s3.us-east-1.amazonaws.com/data/services.json")
   //       .then((response) => {
   //         if (!response.ok) {
   //           throw new Error("Failed to fetch data");
@@ -107,7 +107,6 @@ export default function ServicesLayout() {
   //       .catch((error) => console.error("Error loading Sevas data:", error));
   //   }, []);
 
-  // Load cart from localStorage on component mount
   useEffect(() => {
     const savedCart = localStorage.getItem('shoppingCart');
     if (savedCart) {
