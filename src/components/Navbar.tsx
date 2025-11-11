@@ -25,6 +25,7 @@ export default function Navbar() {
     // Clear user data
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('token');
+    localStorage.clear();
     setIsLoggedIn(false);
     setUsername('');
     router.push('/');

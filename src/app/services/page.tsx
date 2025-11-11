@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import MainHeader from '@/components/TopInfo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -77,6 +77,7 @@ export default function ServicesLayout() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCheckout, setShowCheckout] = useState<boolean>(false);
+  const isFirstRender = useRef(true);
   const router = useRouter();
 
   const categories: Category[] = Object.keys(cartArray).map(key => ({
@@ -108,20 +109,25 @@ export default function ServicesLayout() {
   //   }, []);
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('shoppingCart');
-    if (savedCart) {
-      try {
-        setCart(JSON.parse(savedCart));
-      } catch (error) {
-        console.error('Error loading cart from localStorage:', error);
-      }
+  const savedCart = localStorage.getItem('shoppingCart');
+  if (savedCart) {
+    try {
+      setCart(JSON.parse(savedCart));
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
     }
-  }, []);
+  }
+}, []);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('shoppingCart', JSON.stringify(cart));
-  }, [cart]);
+  if (isFirstRender.current) {
+    isFirstRender.current = false;
+    return;
+  }
+  localStorage.setItem('shoppingCart', JSON.stringify(cart));
+}, [cart]);
+
 
   const filteredServices: Service[] = selectedCategory === 'all'
     ? services
@@ -443,7 +449,7 @@ export default function ServicesLayout() {
                     </button>
 
                     <button
-                      onClick={clearCart}
+                      onClick={()=>clearCart()}
                       style={{
                         width: '100%',
                         backgroundColor: '#FEE2E2',
