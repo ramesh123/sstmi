@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import MainHeader from '@/components/TopInfo';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -11,11 +11,19 @@ interface Category {
   name: string;
 }
 
+interface ServiceData {
+  name: string;
+  price: number;
+  group: string;
+  icon: string;
+}
+
 interface Service {
   id: string;
   name: string;
   price: number;
   category: string;
+  icon: string;
   bgColor: string;
   borderColor: string;
 }
@@ -24,110 +32,73 @@ interface CartItem extends Service {
   quantity: number;
 }
 
-const cartArray = {
-  SevaServices: [
-    { name: "Punyahavachanam", donation_usd: 108 },
-    { name: "Namakaranam (Naming ceremony)", donation_usd: 51 },
-    { name: "Annaprashanam", donation_usd: 31 },
-    { name: "Kesha Kandana (Hair offering)", donation_usd: 31 },
-    { name: "Akshara Abhyasam", donation_usd: 31 },
-    { name: "Upanayanam", donation_usd: 201 },
-    { name: "Nischitartham (Betrothal ceremony)", donation_usd: 151 },
-    { name: "Hindu Wedding", donation_usd: 251 },
-    { name: "Seemantam", donation_usd: 151 },
-    { name: "Shashtipoorti Shanti (60th Birthday)", donation_usd: 201 },
-    { name: "Bhimaratha Shanthi (70th Birthday)", donation_usd: 201 },
-    { name: "Shathabhishekam (80th Birthday)", donation_usd: 201 },
-    { name: "Sathyanarayana Vratham", donation_usd: 108 },
-    { name: "Gruhapravesham, Vaastu Shanti", donation_usd: 151 },
-    { name: "Thirupaavai Ghoshti", donation_usd: 151 },
-    { name: "Hanuman Chalisa 108 times", donation_usd: 251 }
-  ],
-  Kalyanams: [
-    { name: "Valli Devasena Sahita Sri Subrahmanya Swamy Kalyanam", donation_usd: 251 },
-    { name: "SivaParvathi Kalyanam", donation_usd: 251 },
-    { name: "Sri SitaRama Kalayanam", donation_usd: 251 },
-    { name: "Sri Godha Kalayanam", donation_usd: 251 },
-    { name: "Sri Srinivasa Kalayanam", donation_usd: 251 }
-  ],
-  Homams: [
-    { name: "Gana Homam", donation_usd: 108 },
-    { name: "Navagraha & Shanthi Homam", donation_usd: 108 },
-    { name: "Kujagraha Shanthi Homam", donation_usd: 151 },
-    { name: "Asleshabali Pooja & Sarpasanthi Homam", donation_usd: 251 },
-    { name: "Shathru Samhara Homam", donation_usd: 251 },
-    { name: "Aayusha Homam", donation_usd: 151 },
-    { name: "Sri Sarasvati/Sri Lakshmi Hayagriva Homam", donation_usd: 108 },
-    { name: "Sri AstaLakshmi Homam", donation_usd: 108 },
-    { name: "Rudra Homam", donation_usd: 151 },
-    { name: "Maha Mrutyunjaya Homam", donation_usd: 151 },
-    { name: "Manyusukta Homam", donation_usd: 108 },
-    { name: "Maha Sudarshana Homam", donation_usd: 151 },
-    { name: "Raama Tharaka Homam", donation_usd: 108 },
-    { name: "Dhanvantari Homam", donation_usd: 108 },
-    { name: "Durga Homam", donation_usd: 108 },
-    { name: "Chandi Homam", donation_usd: 251 },
-    { name: "Gruhapravesham, Vaastu Shanti", donation_usd: 151 }
-  ]
-};
-
-
 export default function ServicesLayout() {
-  //const [cartArray, setCartArray] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [servicesArray, setServicesArray] = useState<ServiceData[]>([]);
   const [showCheckout, setShowCheckout] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const isFirstRender = useRef(true);
   const router = useRouter();
 
-  const categories: Category[] = Object.keys(cartArray).map(key => ({
-    id: key,
-    name: key.replace(/([A-Z])/g, ' $1').trim(),
+  // Fetch services data
+  useEffect(() => {
+    fetch("https://sstmi-website.s3.us-east-1.amazonaws.com/assets/services.json")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        return response.json();
+      })
+      .then((data: ServiceData[]) => {
+        setServicesArray(data);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error loading Services data:", error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem('shoppingCart');
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (error) {
+        console.error('Error loading cart from localStorage:', error);
+      }
+    }
+  }, []);
+
+  // Save cart to localStorage whenever it changes (skip first render)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    localStorage.setItem('shoppingCart', JSON.stringify(cart));
+  }, [cart]);
+
+  // Transform services array
+  const services: Service[] = servicesArray.map((item, index) => ({
+    id: `${item.group}-${index}`,
+    name: item.name,
+    price: item.price,
+    category: item.group,
+    icon: item.icon,
+    bgColor: '#FFF3E0',
+    borderColor: '#FFB74D'
   }));
 
-  const services: Service[] = Object.entries(cartArray).flatMap(([category, items]) =>
-    items.map((item, index) => ({
-      id: `${category}-${index}`,
-      name: item.name,
-      price: item.donation_usd,
-      category: category,
-      bgColor: '#FFF3E0',
-      borderColor: '#FFB74D'
-    }))
-  );
-
-  // useEffect(() => {
-  //     fetch("https://sstmi-admin-portal.s3.us-east-1.amazonaws.com/data/services.json")
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch data");
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data: any[]) => setCartArray(data))
-  //       .catch((error) => console.error("Error loading Sevas data:", error));
-  //   }, []);
-
-  useEffect(() => {
-  const savedCart = localStorage.getItem('shoppingCart');
-  if (savedCart) {
-    try {
-      setCart(JSON.parse(savedCart));
-    } catch (error) {
-      console.error('Error loading cart from localStorage:', error);
-    }
-  }
-}, []);
-
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-  if (isFirstRender.current) {
-    isFirstRender.current = false;
-    return;
-  }
-  localStorage.setItem('shoppingCart', JSON.stringify(cart));
-}, [cart]);
-
+  // Get unique categories
+  const categories: Category[] = Array.from(
+    new Set(servicesArray.map(item => item.group))
+  ).map(category => ({
+    id: category,
+    name: category
+  }));
 
   const filteredServices: Service[] = selectedCategory === 'all'
     ? services
@@ -183,7 +154,7 @@ export default function ServicesLayout() {
     } else {
       router.push('/login/');
     }
-  }
+  };
 
   // Checkout Page
   if (showCheckout) {
@@ -296,6 +267,7 @@ export default function ServicesLayout() {
                         alignItems: 'center',
                         flexWrap: 'wrap'
                       }}>
+                        <div style={{ fontSize: '2rem' }}>{item.icon}</div>
                         <div style={{ flex: 1, minWidth: '150px' }}>
                           <h3 style={{
                             fontSize: '1.125rem',
@@ -449,7 +421,7 @@ export default function ServicesLayout() {
                     </button>
 
                     <button
-                      onClick={()=>clearCart()}
+                      onClick={() => clearCart()}
                       style={{
                         width: '100%',
                         backgroundColor: '#FEE2E2',
@@ -471,7 +443,8 @@ export default function ServicesLayout() {
               </div>
             )}
           </div>
-        </div><Footer />
+        </div>
+        <Footer />
       </>
     );
   }
@@ -531,53 +504,40 @@ export default function ServicesLayout() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-            <aside style={{
-              width: '250px',
-              flexShrink: 0,
-              minWidth: '250px'
-            }}>
-              <div style={{
-                background: 'white',
-                borderRadius: '1rem',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                padding: '1.5rem',
-                position: 'sticky',
-                top: '1.5rem'
+          {isLoading ? (
+            <div style={{ textAlign: 'center', padding: '4rem 0' }}>
+              <p style={{ fontSize: '1.25rem', color: '#6B7280' }}>
+                Loading services...
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+              <aside style={{
+                width: '250px',
+                flexShrink: 0,
+                minWidth: '250px'
               }}>
-                <h2 style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 'bold',
-                  color: '#065F46',
-                  marginBottom: '1.5rem',
-                  paddingBottom: '0.75rem',
-                  borderBottom: '2px solid #DC2626'
+                <div style={{
+                  background: 'white',
+                  borderRadius: '1rem',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                  padding: '1.5rem',
+                  position: 'sticky',
+                  top: '1.5rem'
                 }}>
-                  Categories
-                </h2>
-                <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <button
-                    onClick={() => setSelectedCategory('all')}
-                    style={{
-                      width: '100%',
-                      textAlign: 'left',
-                      padding: '0.75rem 1rem',
-                      borderRadius: '0.5rem',
-                      fontWeight: '500',
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s',
-                      backgroundColor: selectedCategory === 'all' ? '#F97316' : '#F9FAFB',
-                      color: selectedCategory === 'all' ? 'white' : '#374151',
-                      boxShadow: selectedCategory === 'all' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
-                    }}
-                  >
-                    All Services
-                  </button>
-                  {categories.map((category) => (
+                  <h2 style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: '#065F46',
+                    marginBottom: '1.5rem',
+                    paddingBottom: '0.75rem',
+                    borderBottom: '2px solid #DC2626'
+                  }}>
+                    Categories
+                  </h2>
+                  <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
+                      onClick={() => setSelectedCategory('all')}
                       style={{
                         width: '100%',
                         textAlign: 'left',
@@ -587,121 +547,151 @@ export default function ServicesLayout() {
                         border: 'none',
                         cursor: 'pointer',
                         transition: 'all 0.3s',
-                        backgroundColor: selectedCategory === category.id ? '#F97316' : '#F9FAFB',
-                        color: selectedCategory === category.id ? 'white' : '#374151',
-                        boxShadow: selectedCategory === category.id ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
-                      }}
-                    >{category.name}
-                    </button>
-                  ))}
-                </nav>
-              </div>
-            </aside>
-
-            <section style={{ flex: 1, minWidth: '300px' }}>
-              <h1 style={{
-                fontSize: '2.5rem',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                color: '#065F46',
-                marginBottom: '2rem'
-              }}>
-                <span style={{
-                  textDecoration: 'underline',
-                  textDecorationColor: '#DC2626',
-                  textDecorationThickness: '4px'
-                }}>
-                  {selectedCategory === 'all'
-                    ? 'All Services'
-                    : categories.find(c => c.id === selectedCategory)?.name || 'All Services'}
-                </span>
-              </h1>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '1.5rem'
-              }}>
-                {filteredServices.map((service) => (
-                  <div
-                    key={service.id}
-                    style={{
-                      backgroundColor: service.bgColor,
-                      border: `2px solid ${service.borderColor}`,
-                      borderRadius: '1.5rem',
-                      padding: '2rem',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                      transition: 'box-shadow 0.3s'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'}
-                    onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'}
-                  >
-
-                    <h3 style={{
-                      color: '#78350F',
-                      fontSize: '1.25rem',
-                      fontWeight: '600',
-                      textAlign: 'center',
-                      marginBottom: '1.5rem',
-                      minHeight: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      {service.name}
-                    </h3>
-
-                    <div style={{
-                      color: '#EA580C',
-                      fontSize: '2.5rem',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      marginBottom: '2rem'
-                    }}>
-                      ${service.price}
-                    </div>
-
-                    <button
-                      onClick={() => addToCart(service)}
-                      style={{
-                        width: '100%',
-                        backgroundColor: cart.find(item => item.id === service.id) ? '#10B981' : '#F97316',
-                        color: 'white',
-                        fontWeight: '600',
-                        padding: '0.75rem 1.5rem',
-                        borderRadius: '0.5rem',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.3s'
-                      }}
-                      onMouseEnter={(e) => {
-                        const isInCart = cart.find(item => item.id === service.id);
-                        e.currentTarget.style.backgroundColor = isInCart ? '#059669' : '#EA580C';
-                      }}
-                      onMouseLeave={(e) => {
-                        const isInCart = cart.find(item => item.id === service.id);
-                        e.currentTarget.style.backgroundColor = isInCart ? '#10B981' : '#F97316';
+                        backgroundColor: selectedCategory === 'all' ? '#F97316' : '#F9FAFB',
+                        color: selectedCategory === 'all' ? 'white' : '#374151',
+                        boxShadow: selectedCategory === 'all' ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
                       }}
                     >
-                      {cart.find(item => item.id === service.id)
-                        ? `Added to Cart (${cart.find(item => item.id === service.id)?.quantity})`
-                        : 'Add to Cart'}
+                      All Services
                     </button>
-                  </div>
-                ))}
-              </div>
-
-              {filteredServices.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-                  <p style={{ fontSize: '1.25rem', color: '#6B7280' }}>
-                    No services found in this category.
-                  </p>
+                    {categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '0.5rem',
+                          fontWeight: '500',
+                          border: 'none',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s',
+                          backgroundColor: selectedCategory === category.id ? '#F97316' : '#F9FAFB',
+                          color: selectedCategory === category.id ? 'white' : '#374151',
+                          boxShadow: selectedCategory === category.id ? '0 4px 6px rgba(0,0,0,0.1)' : 'none'
+                        }}
+                      >
+                        {category.name}
+                      </button>
+                    ))}
+                  </nav>
                 </div>
-              )}
-            </section>
-          </div>
+              </aside>
+
+              <section style={{ flex: 1, minWidth: '300px' }}>
+                <h1 style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  color: '#065F46',
+                  marginBottom: '2rem'
+                }}>
+                  <span style={{
+                    textDecoration: 'underline',
+                    textDecorationColor: '#DC2626',
+                    textDecorationThickness: '4px'
+                  }}>
+                    {selectedCategory === 'all'
+                      ? 'All Services'
+                      : categories.find(c => c.id === selectedCategory)?.name || 'All Services'}
+                  </span>
+                </h1>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gap: '1.5rem'
+                }}>
+                  {filteredServices.map((service) => (
+                    <div
+                      key={service.id}
+                      style={{
+                        backgroundColor: service.bgColor,
+                        border: `2px solid ${service.borderColor}`,
+                        borderRadius: '1.5rem',
+                        padding: '2rem',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                        transition: 'box-shadow 0.3s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'}
+                    >
+                      <div style={{
+                        fontSize: '3rem',
+                        textAlign: 'center',
+                        marginBottom: '1rem'
+                      }}>
+                        {service.icon}
+                      </div>
+
+                      <h3 style={{
+                        color: '#78350F',
+                        fontSize: '1.25rem',
+                        fontWeight: '600',
+                        textAlign: 'center',
+                        marginBottom: '1.5rem',
+                        minHeight: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        {service.name}
+                      </h3>
+
+                      <div style={{
+                        color: '#EA580C',
+                        fontSize: '2.5rem',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        marginBottom: '2rem'
+                      }}>
+                        ${service.price}
+                      </div>
+
+                      <button
+                        onClick={() => addToCart(service)}
+                        style={{
+                          width: '100%',
+                          backgroundColor: cart.find(item => item.id === service.id) ? '#10B981' : '#F97316',
+                          color: 'white',
+                          fontWeight: '600',
+                          padding: '0.75rem 1.5rem',
+                          borderRadius: '0.5rem',
+                          border: 'none',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.3s'
+                        }}
+                        onMouseEnter={(e) => {
+                          const isInCart = cart.find(item => item.id === service.id);
+                          e.currentTarget.style.backgroundColor = isInCart ? '#059669' : '#EA580C';
+                        }}
+                        onMouseLeave={(e) => {
+                          const isInCart = cart.find(item => item.id === service.id);
+                          e.currentTarget.style.backgroundColor = isInCart ? '#10B981' : '#F97316';
+                        }}
+                      >
+                        {cart.find(item => item.id === service.id)
+                          ? `Added to Cart (${cart.find(item => item.id === service.id)?.quantity})`
+                          : 'Add to Cart'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {filteredServices.length === 0 && !isLoading && (
+                  <div style={{ textAlign: 'center', padding: '3rem 0' }}>
+                    <p style={{ fontSize: '1.25rem', color: '#6B7280' }}>
+                      No services found in this category.
+                    </p>
+                  </div>
+                )}
+              </section>
+            </div>
+          )}
         </div>
-      </div><Footer />
+      </div>
+      <Footer />
     </>
   );
 }
