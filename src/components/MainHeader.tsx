@@ -39,11 +39,11 @@ export default function MainHeader() {
 
       {/* Scrolling Text */}
       <div id="main-header-scrolling" className="mt-2">
-        <div className="scrolling-text">
+        <div className="scrolling-text"><span className="text-darkGreen">
           | Temple Timings: Sat & Sun 9 AM–8:30 PM | Mon - Fri 9 AM–12 PM, 5:30–8:30 PM 
           | Temple Timings: Sat & Sun 9 AM–8:30 PM | Mon - Fri 9 AM–12 PM, 5:30–8:30 PM 
           | Temple Timings: Sat & Sun 9 AM–8:30 PM | Mon - Fri 9 AM–12 PM, 5:30–8:30 PM 
-          | Temple Timings: Sat & Sun 9 AM–8:30 PM | Mon - Fri 9 AM–12 PM, 5:30–8:30 PM 
+          | Temple Timings: Sat & Sun 9 AM–8:30 PM | Mon - Fri 9 AM–12 PM, 5:30–8:30 PM </span>
         </div>
       </div>
 
